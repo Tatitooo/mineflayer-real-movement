@@ -1,0 +1,57 @@
+{
+  "name": "mineflayer-real-movement",
+  "version": "0.1.0",
+  "description": "Realistic movement engine for Mineflayer bots with true AABB physics and human-like motion",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "tsc --noEmit",
+    "demo:parkour": "bun run scripts/demo-parkour.ts",
+    "demo:pvp": "bun run scripts/demo-pvp.ts",
+    "demo:escape": "bun run scripts/demo-escape.ts",
+    "demo:side-by-side": "bun run scripts/demo-side-by-side.ts",
+    "demo:anticheat": "bun run scripts/demo-anticheat.ts",
+    "demo:speedrun": "bun run scripts/demo-speedrun.ts",
+    "benchmark": "bun run benchmarks/pathfinder-perf.ts"
+  },
+  "dependencies": {
+    "mineflayer": "^4.20.0",
+    "minecraft-data": "^3.65.0",
+    "prismarine-physics": "^1.8.0",
+    "vec3": "^0.1.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "bun-types": "^1.3.13",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "bun": ">=1.1.20",
+    "node": ">=20.0.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mineflayer",
+    "minecraft",
+    "bot",
+    "pathfinding",
+    "physics",
+    "aabb",
+    "movement",
+    "parkour",
+    "pvp",
+    "anti-cheat",
+    "humanization"
+  ],
+  "author": "Tatitooo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tatitooo/mineflayer-real-movement.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tatitooo/mineflayer-real-movement/issues"
+  },
+  "homepage": "https://github.com/Tatitooo/mineflayer-real-movement#readme"
+}

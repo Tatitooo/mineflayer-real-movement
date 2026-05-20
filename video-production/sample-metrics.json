@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "botVersion": "mineflayer-real-movement 1.0.0",
+    "serverVersion": "1.20.4",
+    "durationTicks": 300,
+    "scenario": "anticheat-stress-test"
+  },
+  "ticks": [
+    {"tick": 1, "yaw": 45.2, "pitch": -12.5, "speed": 0.215, "state": "IDLE", "reactionDelayMs": 0, "jitterYaw": 0.0, "jitterSpeed": 0.0},
+    {"tick": 2, "yaw": 45.8, "pitch": -12.3, "speed": 0.280, "state": "ALIGNING", "reactionDelayMs": 180, "jitterYaw": 0.35, "jitterSpeed": 0.012},
+    {"tick": 3, "yaw": 46.1, "pitch": -12.1, "speed": 0.295, "state": "MOVING", "reactionDelayMs": 220, "jitterYaw": 0.42, "jitterSpeed": 0.018},
+    {"tick": 4, "yaw": 46.5, "pitch": -11.9, "speed": 0.312, "state": "MOVING", "reactionDelayMs": 150, "jitterYaw": 0.28, "jitterSpeed": 0.015},
+    {"tick": 5, "yaw": 47.0, "pitch": -11.8, "speed": 0.325, "state": "SPRINTING", "reactionDelayMs": 200, "jitterYaw": 0.55, "jitterSpeed": 0.022},
+    {"tick": 6, "yaw": 47.4, "pitch": -11.7, "speed": 0.340, "state": "SPRINTING", "reactionDelayMs": 170, "jitterYaw": 0.40, "jitterSpeed": 0.019},
+    {"tick": 7, "yaw": 47.8, "pitch": -11.5, "speed": 0.355, "state": "SPRINTING", "reactionDelayMs": 240, "jitterYaw": 0.62, "jitterSpeed": 0.025},
+    {"tick": 8, "yaw": 48.2, "pitch": -11.4, "speed": 0.360, "state": "SPRINTING", "reactionDelayMs": 160, "jitterYaw": 0.33, "jitterSpeed": 0.014},
+    {"tick": 9, "yaw": 48.5, "pitch": -11.2, "speed": 0.370, "state": "SPRINTING", "reactionDelayMs": 210, "jitterYaw": 0.48, "jitterSpeed": 0.021},
+    {"tick": 10, "yaw": 48.9, "pitch": -11.0, "speed": 0.380, "state": "SPRINTING", "reactionDelayMs": 190, "jitterYaw": 0.51, "jitterSpeed": 0.017}
+  ]
+}
