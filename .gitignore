@@ -38,3 +38,11 @@ bun.lockb
 # Temporary files
 *.tmp
 *.temp
+
+# Vault / cron artifacts (should never be committed)
+06-Cron/
+01-Daily/
+02-Projects/
+03-Research/
+04-Contacts/
+05-Knowledge/
