@@ -7,8 +7,17 @@ import { performance } from "perf_hooks";
 import { Vec3 } from "vec3";
 import { AStarPathfinder } from "../src/pathfinding/astar-basic";
 import { GoalBlock } from "../src/pathfinding/goals";
-import { WorldCollisionService } from "../src/core/world-collision-service";
+import { WorldCollisionService, type McDataLike } from "../src/core/world-collision-service";
 import { MockWorld, createFlatGround, createTree } from "../tests/physics-mocks";
+
+const benchmarkMcData: McDataLike = {
+  blocksByName: {
+    stone: { boundingBox: "block", minStateId: 1, maxStateId: 1 },
+    oak_log: { boundingBox: "block", minStateId: 100, maxStateId: 100 },
+    oak_leaves: { boundingBox: "block", minStateId: 200, maxStateId: 200 },
+    air: { boundingBox: "empty", minStateId: 0, maxStateId: 0 },
+  },
+};
 
 interface BenchmarkResult {
   name: string;
@@ -45,29 +54,29 @@ function rssMB(): number {
 
 function buildTreeWorld(count: number): MockWorld {
   const world = new MockWorld();
-  createFlatGround(world, 64, 100);
+  createFlatGround(world, 63, 100);
   for (let i = 0; i < count; i++) {
-    createTree(world, 5 + i * 4, 0);
+    createTree(world, 5 + i * 4, 0, 64, 4);
   }
   return world;
 }
 
 function buildHillyWorld(): MockWorld {
   const world = new MockWorld();
-  createFlatGround(world, 64, 100);
+  createFlatGround(world, 63, 100);
   for (let x = 10; x < 40; x += 5) {
-    world.setBlock(x, 65, 0, { name: "stone", stateId: 1, boundingBox: "block", shapes: [[0, 0, 0, 1, 1, 1]] });
-    world.setBlock(x + 1, 65, 0, { name: "stone", stateId: 1, boundingBox: "block", shapes: [[0, 0, 0, 1, 1, 1]] });
-    world.setBlock(x + 2, 66, 0, { name: "stone", stateId: 1, boundingBox: "block", shapes: [[0, 0, 0, 1, 1, 1]] });
+    world.setBlock(x, 64, 0, { name: "stone", stateId: 1, boundingBox: "block", shapes: [[0, 0, 0, 1, 1, 1]] });
+    world.setBlock(x + 1, 64, 0, { name: "stone", stateId: 1, boundingBox: "block", shapes: [[0, 0, 0, 1, 1, 1]] });
+    world.setBlock(x + 2, 65, 0, { name: "stone", stateId: 1, boundingBox: "block", shapes: [[0, 0, 0, 1, 1, 1]] });
   }
   return world;
 }
 
 function buildGapWorld(gap: number): MockWorld {
   const world = new MockWorld();
-  createFlatGround(world, 64, 100);
+  createFlatGround(world, 63, 100);
   for (let x = 4; x < 4 + gap; x++) {
-    world.removeBlock(x, 64, 0);
+    world.removeBlock(x, 63, 0);
   }
   return world;
 }
@@ -89,7 +98,7 @@ function runBenchmark(params: {
   // Warm-up
   {
     const world = params.buildWorld();
-    const cs = new WorldCollisionService(world as any);
+    const cs = new WorldCollisionService(benchmarkMcData);
     const pf = new AStarPathfinder(world, cs);
     const goal = new GoalBlock(params.goal);
     pf.findPath(params.start, goal, params.maxIterations ?? 10000, params.maxDistance);
@@ -97,7 +106,7 @@ function runBenchmark(params: {
 
   for (let i = 0; i < params.runs; i++) {
     const world = params.buildWorld();
-    const cs = new WorldCollisionService(world as any);
+    const cs = new WorldCollisionService(benchmarkMcData);
     const pf = new AStarPathfinder(world, cs);
     const goal = new GoalBlock(params.goal);
     const { ms, result } = measure(() =>
@@ -152,7 +161,7 @@ benchmarks.push(
     runs: RUNS,
     buildWorld: () => {
       const w = new MockWorld();
-      createFlatGround(w, 64, 100);
+      createFlatGround(w, 63, 100);
       return w;
     },
     start: new Vec3(0, 64, 0),
@@ -178,7 +187,7 @@ benchmarks.push(
     runs: RUNS,
     buildWorld: () => buildHillyWorld(),
     start: new Vec3(0, 64, 0),
-    goal: new Vec3(50, 70, 0),
+    goal: new Vec3(50, 65, 0),
     maxDistance: 200,
   })
 );
