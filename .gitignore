@@ -46,3 +46,9 @@ bun.lockb
 03-Research/
 04-Contacts/
 05-Knowledge/
+
+# Temporary debug scripts
+/test-*.ts
+
+# Local Minecraft server
+/server/

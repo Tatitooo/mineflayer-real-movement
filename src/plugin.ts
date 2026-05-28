@@ -12,7 +12,7 @@ import type { HumanizationOptions } from './humanization/humanization-layer'
 export interface RealMovementPlugin {
   worldCollision: WorldCollisionService
   goto: (goal: PathGoal, options?: { maxSearchDistance?: number; maxIterations?: number }) => Promise<void>
-  findPath: (start: Vec3, goal: PathGoal, options?: { maxSearchDistance?: number; maxIterations?: number }) => PathResult
+  findPath: (start: Vec3, goal: PathGoal, options?: { maxSearchDistance?: number; maxIterations?: number }) => Promise<PathResult>
   stop: () => void
   /** PvP strafe controller. Set a target entity to start strafing. */
   strafe: {
@@ -88,7 +88,7 @@ export function realMovementPlugin (bot: Bot, pluginOptions?: RealMovementPlugin
       pluginApi.strafe.stop()
       pluginApi.elytra.reset()
 
-      const result = pathfinder.findPath(
+      const result = await pathfinder.findPath(
         bot.entity.position.clone(),
         goal,
         options.maxIterations ?? 10000,
@@ -118,12 +118,19 @@ export function realMovementPlugin (bot: Bot, pluginOptions?: RealMovementPlugin
           activeExecutor.stop()
           activeExecutor = null
         }
-        pluginApi.goto(goal, options).catch(() => {})
+        // Defer the new goto so the current executor can finish rejecting
+        setTimeout(() => {
+          pluginApi.goto(goal, options).catch(() => {})
+        }, 0)
       }
 
       const botLike = bot as unknown as import('./execution/executor').BotLike & { entity: { yaw: number } }
-      // Provide setYaw for instant yaw snap near targets (prevents circling)
-      botLike.setYaw = (yaw: number) => { bot.entity.yaw = yaw }
+      // Provide setYaw for instant yaw snap near targets (prevents circling).
+      // Must call bot.look to send the look packet to the server; otherwise
+      // the server calculates movement using the old yaw.
+      botLike.setYaw = (yaw: number) => {
+        bot.look(yaw, bot.entity.pitch, true).catch(() => {})
+      }
 
       activeExecutor = new PathExecutor(botLike, {
         replanCallback: replan,

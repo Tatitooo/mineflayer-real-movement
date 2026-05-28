@@ -32,7 +32,7 @@ function makeNode (x: number, y: number, z: number, onGround = true, vel?: Vec3)
 /* ------------------------------------------------------------------ */
 
 describe('PhysicsPredictor', () => {
-  it('simulates walking forward on flat ground', () => {
+  it('simulates walking forward on flat ground', async () => {
     const world = makeWorld()
     const collisionService = new WorldCollisionService(mcData)
     const predictor = new PhysicsPredictor(world, collisionService, mcData)
@@ -50,7 +50,7 @@ describe('PhysicsPredictor', () => {
     expect(result.onGround).toBe(true)
   })
 
-  it('simulates sprinting faster than walking', () => {
+  it('simulates sprinting faster than walking', async () => {
     const world = makeWorld()
     const collisionService = new WorldCollisionService(mcData)
     const predictor = new PhysicsPredictor(world, collisionService, mcData)
@@ -66,7 +66,7 @@ describe('PhysicsPredictor', () => {
     expect(sprint.predictedTicks).toBeLessThan(walk.predictedTicks)
   })
 
-  it('simulates sprint-jump over a gap', () => {
+  it('simulates sprint-jump over a gap', async () => {
     const world = new MockWorld()
     // Ground at z=-1 and z=2, gap in between (blocks at y=0)
     world.setBlock(0, 0, -1, { name: 'stone', stateId: 1, boundingBox: 'block', shapes: [[0, 0, 0, 1, 1, 1]] })
@@ -85,7 +85,7 @@ describe('PhysicsPredictor', () => {
     expect(result.exitPos.y).toBeCloseTo(1, 0)
   })
 
-  it('returns exit velocity after simulation', () => {
+  it('returns exit velocity after simulation', async () => {
     const world = makeWorld()
     const collisionService = new WorldCollisionService(mcData)
     const predictor = new PhysicsPredictor(world, collisionService, mcData)
@@ -107,7 +107,7 @@ describe('PhysicsPredictor', () => {
 /* ------------------------------------------------------------------ */
 
 describe('Cost Functions', () => {
-  it('computes heuristic cost without predictor', () => {
+  it('computes heuristic cost without predictor', async () => {
     const from = makeNode(0, 1, 0)
     const toPos = new Vec3(5, 1, 0)
     const controls = { forward: true, sprint: true, jump: false, back: false, left: false, right: false, sneak: false }
@@ -119,7 +119,7 @@ describe('Cost Functions', () => {
     expect(result.simulation).toBeUndefined()
   })
 
-  it('computes simulated cost with predictor', () => {
+  it('computes simulated cost with predictor', async () => {
     const world = makeWorld()
     const collisionService = new WorldCollisionService(mcData)
     const predictor = new PhysicsPredictor(world, collisionService, mcData)
@@ -138,15 +138,15 @@ describe('Cost Functions', () => {
     }
   })
 
-  it('applies soul sand modifier', () => {
+  it('applies soul sand modifier', async () => {
     expect(applyBlockModifierCost(10, 'soul_sand', null)).toBe(25)
   })
 
-  it('applies ice modifier', () => {
+  it('applies ice modifier', async () => {
     expect(applyBlockModifierCost(10, 'ice', null)).toBe(7)
   })
 
-  it('applies lava penalty', () => {
+  it('applies lava penalty', async () => {
     expect(applyBlockModifierCost(10, null, 'lava')).toBe(50)
   })
 })
@@ -156,7 +156,7 @@ describe('Cost Functions', () => {
 /* ------------------------------------------------------------------ */
 
 describe('Momentum Edges', () => {
-  it('generates diagonal sprint edges when on ground with velocity', () => {
+  it('generates diagonal sprint edges when on ground with velocity', async () => {
     const world = makeWorld()
     const collisionService = new WorldCollisionService(mcData)
     const node = makeNode(0.5, 1, 0.5, true, new Vec3(0.2, 0, 0.2))
@@ -167,7 +167,7 @@ describe('Momentum Edges', () => {
     expect(diagSprints.length).toBeGreaterThan(0)
   })
 
-  it('generates long-gap edges when velocity is high', () => {
+  it('generates long-gap edges when velocity is high', async () => {
     const world = new MockWorld()
     createFlatGround(world, 0, 10)
     // Create a 3-block gap
@@ -185,7 +185,7 @@ describe('Momentum Edges', () => {
     expect(longGaps.length).toBeGreaterThan(0)
   })
 
-  it('does not generate momentum edges when stationary', () => {
+  it('does not generate momentum edges when stationary', async () => {
     const world = makeWorld()
     const collisionService = new WorldCollisionService(mcData)
     const node = makeNode(0.5, 1, 0.5, true, new Vec3(0, 0, 0))
@@ -201,7 +201,7 @@ describe('Momentum Edges', () => {
 /* ------------------------------------------------------------------ */
 
 describe('A* with Momentum', () => {
-  it('finds a diagonal sprint path on open ground', () => {
+  it('finds a diagonal sprint path on open ground', async () => {
     const world = makeWorld()
     const collisionService = new WorldCollisionService(mcData)
     const predictor = new PhysicsPredictor(world, collisionService, mcData)
@@ -209,7 +209,7 @@ describe('A* with Momentum', () => {
 
     // Use integer coordinates (block centers) like the rest of the test suite
     const goal: PathGoal = new GoalBlock(new Vec3(2, 1, 2))
-    const result = pathfinder.findPath(new Vec3(0, 1, 0), goal, 500)
+    const result = await pathfinder.findPath(new Vec3(0, 1, 0), goal, 500)
 
     expect(result.status).toBe('success')
     expect(result.path.length).toBeGreaterThan(1)
@@ -221,7 +221,7 @@ describe('A* with Momentum', () => {
 /* ------------------------------------------------------------------ */
 
 describe('DynamicReplanner', () => {
-  it('triggers replan when a block update is near the path', () => {
+  it('triggers replan when a block update is near the path', async () => {
     let replanCount = 0
     const bot = {
       entity: { position: new Vec3(0.5, 1, 0.5) },
@@ -241,7 +241,7 @@ describe('DynamicReplanner', () => {
     replanner.stop()
   })
 
-  it('start / stop lifecycle is safe', () => {
+  it('start / stop lifecycle is safe', async () => {
     const bot = {
       entity: { position: new Vec3(0, 1, 0) },
       on: () => {},

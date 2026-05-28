@@ -31,7 +31,7 @@ export class AStarPathfinder {
     private readonly predictor?: PhysicsPredictor
   ) {}
 
-  findPath (start: Vec3, goal: PathGoal, maxIterations = 10000, maxSearchDistance?: number): PathResult {
+  async findPath (start: Vec3, goal: PathGoal, maxIterations = 10000, maxSearchDistance?: number): Promise<PathResult> {
     const startNode: MovementNode = {
       pos: start,
       vel: new Vec3(0, 0, 0),
@@ -57,6 +57,11 @@ export class AStarPathfinder {
 
     while (open.size > 0 && iterations < maxIterations) {
       iterations++
+
+      // Yield to event loop every 100 iterations to prevent blocking
+      if (iterations % 100 === 0) {
+        await new Promise(resolve => setImmediate(resolve))
+      }
 
       let bestKey = ''
       let bestF = Infinity
